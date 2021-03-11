@@ -27,6 +27,23 @@ namespace recipes_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "AllowLocalhost",
+                    builder => 
+                    {
+                        builder.WithOrigins(
+                            "https://localhost:3030",
+                            "http://localhost:3030"
+                        );
+
+                        builder.AllowAnyMethod();
+                        builder.AllowAnyHeader();
+                    }
+                );
+            });
+
             // register EF context
             services.AddDbContext<RecipeContext>(opt => opt.UseInMemoryDatabase("Recipes"));
 
@@ -57,6 +74,13 @@ namespace recipes_api
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors(builder => {
+                builder.WithOrigins(
+                        "https://localhost:3030",
+                        "http://localhost:3030"
+                );
+            });
 
             app.UseEndpoints(endpoints =>
             {
