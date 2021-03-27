@@ -9,7 +9,7 @@ namespace recipes_api.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public string Author { get; set; }
-        public List<Ingredient> Ingredients { get; set; }
         public string Directions { get; set; }
+        public ICollection<RecipeIngredient> RecipeIngredients { get; set; }
     }
 }

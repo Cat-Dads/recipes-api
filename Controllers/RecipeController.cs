@@ -35,7 +35,10 @@ namespace recipes_api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Recipe>> GetRecipe(long id)
         {
-            var recipe = await _context.RecipeItems.FindAsync(id);
+            var recipe = await _context
+                .RecipeItems
+                .Include(recipe => recipe.Ingredients)
+                .FirstOrDefaultAsync(recipe => recipe.Id == id);
 
             if (recipe == null)
             {
@@ -84,6 +87,7 @@ namespace recipes_api.Controllers
             Console.WriteLine($"Received recipe: {JsonSerializer.Serialize(recipe)}");
 
             _context.RecipeItems.Add(recipe);
+            _context.IngredientItems.AddRange(recipe.Ingredients);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRecipe", new { id = recipe.Id }, recipe);
